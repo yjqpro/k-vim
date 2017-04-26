@@ -16,6 +16,9 @@ REM    limitations under the License.
 @if not exist "%HOME%" @set HOME=%HOMEDRIVE%%HOMEPATH%
 @if not exist "%HOME%" @set HOME=%USERPROFILE%
 
+REM Remove old vimrc
+
+
 @set APP_PATH=%HOME%\.k-vim
 IF NOT EXIST "%APP_PATH%" (
     call git clone d:\git\k-vim "%APP_PATH%"
@@ -27,6 +30,13 @@ IF NOT EXIST "%APP_PATH%" (
     chdir /d "%ORIGINAL_DIR%"
     call cd "%APP_PATH%"
 )
+
+rm -rf %APP_PATH%
+rm -rf %HOME%\.vim
+del .vimrc
+del _vimrc
+del _viminfo
+del _vim_mru_files
 
 call mklink "%HOME%\.vimrc" "%APP_PATH%\vimrc"
 call mklink "%HOME%\_vimrc" "%APP_PATH%\vimrc"
