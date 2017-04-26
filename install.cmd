@@ -18,6 +18,14 @@ REM    limitations under the License.
 
 REM Remove old vimrc
 
+rm -rf %APP_PATH%
+rm -rf %HOME%\.vim
+del %HOME%\.vimrc
+del %HOME%\_vimrc
+del %HOME%\.vimrc.bundles
+del %HOME%\_viminfo
+del %HOME%\_vim_mru_files
+
 
 @set APP_PATH=%HOME%\.k-vim
 IF NOT EXIST "%APP_PATH%" (
@@ -31,24 +39,9 @@ IF NOT EXIST "%APP_PATH%" (
     call cd "%APP_PATH%"
 )
 
-rm -rf %APP_PATH%
-rm -rf %HOME%\.vim
-del .vimrc
-del _vimrc
-del _viminfo
-del _vim_mru_files
-
 call mklink "%HOME%\.vimrc" "%APP_PATH%\vimrc"
 call mklink "%HOME%\_vimrc" "%APP_PATH%\vimrc"
 call mklink "%HOME%\.vimrc.bundles" "%APP_PATH%\vimrc.bundles"
-call mklink /J "%HOME%\.vim" "%APP_PATH%\.vim"
+call mklink /J "%HOME%\.vim" "%APP_PATH%"
 
-IF NOT EXIST "%HOME%/.vim/bundle/vundle" (
-    call git clone https://github.com/gmarik/vundle.git "%HOME%/.vim/bundle/vundle"
-) ELSE (
-  call cd "%HOME%/.vim/bundle/vundle"
-  call git pull
-  call cd %HOME%
-)
-
-call vim -u "%APP_PATH%/vimrc.bundles" +PlugInstall! +PlugClean +qall
+call vim -u "%APP_PATH%\vimrc.bundles" +PlugInstall! +PlugClean +qall
