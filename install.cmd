@@ -1,4 +1,4 @@
-REM    Copyright 2014 Steve Francia
+GREM    Copyright 2014 Steve Francia
 REM 
 REM    Licensed under the Apache License, Version 2.0 (the "License");
 REM    you may not use this file except in compliance with the License.
@@ -45,3 +45,4 @@ call mklink "%HOME%\.vimrc.bundles" "%APP_PATH%\vimrc.bundles"
 call mklink /J "%HOME%\.vim" "%APP_PATH%"
 
 call vim -u "%APP_PATH%\vimrc.bundles" +PlugInstall! +PlugClean +qall
+
