@@ -88,8 +88,6 @@ set noswapfile
   " " set undodir=/tmp/vimundo/
 " endif
 
-set wildignore=*.swp,*.bak,*.pyc,*.class,.svn
-
 " 突出显示当前列
 set cursorcolumn
 " 突出显示当前行
@@ -220,7 +218,6 @@ set shiftround
 
 " A buffer becomes hidden when it is abandoned
 set hidden
-set wildmode=list:longest
 set ttyfast
 
 " 00x增减数字时使用十进制
@@ -296,7 +293,8 @@ set completeopt=longest,menu
 " 增强模式中的命令行自动完成操作
 set wildmenu
 " Ignore compiled files
-set wildignore=*.o,*~,*.pyc,*.class
+set wildignore=*.o,*~,*.pyc,*.class,*.swp,*.bak,*.pyc,*.class,.svn
+set wildmode=list:longest,full " Command <Tab> completion, list matches, then longest common part, then all.
 
 " 离开插入模式后自动关闭预览窗口
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
@@ -657,9 +655,10 @@ if has("gui_running")
         set guifont=Monaco\ 12,Monospace\ 12
     endif
     set guioptions-=T
-    set guioptions+=e
+    set guioptions-=e
     set guioptions-=r
     set guioptions-=L
+    set guioptions-=m
     set guitablabel=%M\ %t
     set showtabline=1
     set linespace=2
