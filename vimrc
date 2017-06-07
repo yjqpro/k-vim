@@ -24,8 +24,8 @@
 "==========================================
 
 " 修改leader键
-let mapleader = ','
-let g:mapleader = ','
+let mapleader = "\<Space>"
+let g:mapleader = "\<Space>"
 
 " 开启语法高亮
 syntax on
@@ -429,9 +429,6 @@ cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 
 
-" 搜索相关
-" Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
-map <space> /
 " 进入搜索Use sane regexes"
 nnoremap / /\v
 vnoremap / /\v
