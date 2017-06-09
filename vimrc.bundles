@@ -14,7 +14,7 @@
     " Basics {
         set nocompatible        " Must be first line
         set background=dark     " Assume a dark background
-	filetype off " required! turn off
+    	filetype off " required! turn off
     " }
 
     " Windows Compatible {
@@ -153,10 +153,10 @@ Plug 'thinca/vim-quickrun'
 " view
 " airline
 " 状态栏增强展示
-" Plug 'vim-airline/vim-airline'
-" Plug 'vim-airline/vim-airline-themes'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
-Plug 'itchyny/lightline.vim'
+" Plug 'itchyny/lihtline.vim'
 
 " rainbow_parentheses
 " 括号显示增强
@@ -254,87 +254,6 @@ Plug 'joshdick/onedark.vim'
 
 " Add plugins to &runtimepath
 call plug#end()
-
-
-" ################### 基础 ######################
-
-" syntastic {{{
-    " dependence
-    " 1. shellcheck `brew install shellcheck` https://github.com/koalaman/shellcheck
-
-    let g:syntastic_error_symbol='>>'
-    let g:syntastic_warning_symbol='>'
-    let g:syntastic_check_on_open=1
-    let g:syntastic_check_on_wq=0
-    let g:syntastic_enable_highlighting=1
-
-    " checkers
-    " 最轻量
-    " let g:syntastic_python_checkers=['pyflakes'] " 使用pyflakes
-    " 中等
-    " error code: http://pep8.readthedocs.org/en/latest/intro.html#error-codes
-    let g:syntastic_python_checkers=['pyflakes', 'pep8'] " 使用pyflakes,速度比pylint快
-    let g:syntastic_python_pep8_args='--ignore=E501,E225,E124,E712'
-    " 重量级, 但是足够强大, 定制完成后相当个性化
-    " pylint codes: http://pylint-messages.wikidot.com/all-codes
-    " let g:syntastic_python_checkers=['pyflakes', 'pylint'] " 使用pyflakes,速度比pylint快
-    " let g:syntastic_python_checkers=['pylint'] " 使用pyflakes,速度比pylint快
-    " let g:syntastic_python_pylint_args='--disable=C0111,R0903,C0301'
-
-    " if js
-    " let g:syntastic_javascript_checkers = ['jsl', 'jshint']
-    " let g:syntastic_html_checkers=['tidy', 'jshint']
-
-    " to see error location list
-    let g:syntastic_always_populate_loc_list = 1
-    let g:syntastic_enable_signs = 1
-    let g:syntastic_auto_loc_list = 0
-    let g:syntastic_auto_jump = 0
-    let g:syntastic_loc_list_height = 5
-
-    function! ToggleErrors()
-        let old_last_winnr = winnr('$')
-        lclose
-        if old_last_winnr == winnr('$')
-            " Nothing was closed, open syntastic_error location panel
-            Errors
-        endif
-    endfunction
-    nnoremap <Leader>s :call ToggleErrors()<cr>
-
-    " ,en ,ep to jump between errors
-    function! <SID>LocationPrevious()
-    try
-        lprev
-    catch /^Vim\%((\a\+)\)\=:E553/
-        llast
-    endtry
-    endfunction
-
-    function! <SID>LocationNext()
-    try
-        lnext
-    catch /^Vim\%((\a\+)\)\=:E553/
-        lfirst
-    endtry
-    endfunction
-
-    nnoremap <silent> <Plug>LocationPrevious    :<C-u>exe 'call <SID>LocationPrevious()'<CR>
-    nnoremap <silent> <Plug>LocationNext        :<C-u>exe 'call <SID>LocationNext()'<CR>
-    nmap <silent> <Leader>ep    <Plug>LocationPrevious
-    nmap <silent> <Leader>en    <Plug>LocationNext
-
-    " 修改高亮的背景色, 适应主题
-    highlight SyntasticErrorSign guifg=white guibg=black
-
-    " 禁止插件检查java
-    " thanks to @marsqing, see https://github.com/wklken/k-vim/issues/164
-    let g:syntastic_mode_map = {'mode': 'active', 'passive_filetypes': ['java'] }
-
-    " 关闭syntastic语法检查, 鼠标复制代码时用到, 防止把错误标志给复制了
-    nnoremap <silent> <Leader>ec :SyntasticToggleMode<CR>
-" }}}
-
 
 " ################### 自动补全 ###################
 
@@ -583,15 +502,15 @@ call plug#end()
 " ################### 显示增强 ###################
 
 " airline {{{
-    if !exists('g:airline_symbols')
-        let g:airline_symbols = {}
-    endif
-    let g:airline_left_sep = '▶'
-    let g:airline_left_alt_sep = '❯'
-    let g:airline_right_sep = '◀'
-    let g:airline_right_alt_sep = '❮'
-    let g:airline_symbols.linenr = '¶'
-    let g:airline_symbols.branch = '⎇'
+    " if !exists('g:airline_symbols')
+        " let g:airline_symbols = {}
+    " endif
+    " let g:airline_left_sep = '▶'
+    " let g:airline_left_alt_sep = '❯'
+    " let g:airline_right_sep = '◀'
+    " let g:airline_right_alt_sep = '❮'
+    " let g:airline_symbols.linenr = '¶'
+    " let g:airline_symbols.branch = '⎇'
     " 是否打开tabline
     " let g:airline#extensions#tabline#enabled = 1
 " }}}
@@ -657,7 +576,8 @@ call plug#end()
 
 
     " nerdtreetabs
-    map <Leader>n <plug>NERDTreeTabsToggle<CR>
+    map <Leader>nn <plug>NERDTreeTabsToggle<CR>
+    map <Leader>nt <plug>NERDTreeFind<CR>
     " 关闭同步
     " let g:nerdtree_tabs_synchronize_view=0
     " let g:nerdtree_tabs_synchronize_focus=0
