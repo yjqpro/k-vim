@@ -71,8 +71,13 @@ Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 " 迄今为止用到的最好的自动VIM自动补全插件
 " 重启 :YcmRestartServer
 "Plug 'Valloric/YouCompleteMe'
+
+
+" Plug 'jiangmiao/auto-pairs'
+
 " 自动补全单引号，双引号等
 Plug 'Raimondi/delimitMate'
+
 " 自动补全html/xml标签
 Plug 'docunext/closetag.vim', { 'for': ['html', 'xml'] }
 
@@ -136,6 +141,8 @@ Plug 'dyng/ctrlsf.vim'
 " map ?  <Plug>(incsearch-backward)
 " map g/ <Plug>(incsearch-stay)
 
+Plug 'mileszs/ack.vim'
+
 " quick run
 " quickrun
 Plug 'thinca/vim-quickrun'
@@ -177,6 +184,10 @@ Plug 'vim-ctrlspace/vim-ctrlspace'
 " tagbar
 Plug 'majutsushi/tagbar'
 
+Plug 'rhysd/vim-clang-format'
+Plug 'kana/vim-operator-user'
+Plug 'Shougo/vimproc.vim'
+
 if count(g:bundle_groups, 'markdown')
     " Plug 'plasticboy/vim-markdown', {'for': 'md'}
     " https://github.com/suan/vim-instant-markdown
@@ -198,15 +209,16 @@ endif
 if count(g:bundle_groups, 'python')
     " for python.vim syntax highlight
     " pythonsyntax
-    Plug 'hdima/python-syntax'
-    Plug 'hynek/vim-python-pep8-indent'
-    Plug 'Glench/Vim-Jinja2-Syntax'
+    " Plug 'hdima/python-syntax'
+    " Plug 'hynek/vim-python-pep8-indent'
+    " Plug 'Glench/Vim-Jinja2-Syntax'
+    Plug 'klen/python-mode'
 
     " isort  https://github.com/timothycrosley/isort#readme + https://github.com/fisadev/vim-isort#installation
     " pip install isort
-    Plug 'fisadev/vim-isort'
+    " Plug 'fisadev/vim-isort'
     " Shift-V 上下选中, ctrl + i 规范化
-    let g:vim_isort_map = '<C-i>'
+    " let g:vim_isort_map = '<C-i>'
 endif
 
 if count(g:bundle_groups, 'javascript')
@@ -250,6 +262,8 @@ endif
 
 
 Plug 'joshdick/onedark.vim'
+
+" Plug 'ryanoasis/vim-devicons'
 
 
 " Add plugins to &runtimepath
@@ -421,7 +435,7 @@ call plug#end()
 " ctrlp ctrlpfunky{{{
     let g:ctrlp_map = '<leader>p'
     let g:ctrlp_cmd = 'CtrlP'
-    map <leader>f :CtrlPMRU<CR>
+    " map <leader>f :CtrlPMRU<CR>
     let g:ctrlp_custom_ignore = {
         \ 'dir':  '\v[\/]\.(git|hg|svn|rvm)$',
         \ 'file': '\v\.(exe|so|dll|zip|tar|tar.gz|pyc)$',
@@ -562,40 +576,6 @@ call plug#end()
     let g:rehash256 = 1
 " }}}
 
-" ################### 快速导航 ###################
-
-" nerdtree nerdtreetabs {{{
-    " map <leader>n :NERDTreeToggle<CR>
-    let NERDTreeHighlightCursorline=1
-    let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.obj$', '\.o$', '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
-    "close vim if the only window left open is a NERDTree
-    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | end
-    " s/v 分屏打开文件
-    let g:NERDTreeMapOpenSplit = 's'
-    let g:NERDTreeMapOpenVSplit = 'v'
-
-
-    " nerdtreetabs
-    map <Leader>nn <plug>NERDTreeTabsToggle<CR>
-    map <Leader>nt <plug>NERDTreeFind<CR>
-    " 关闭同步
-    " let g:nerdtree_tabs_synchronize_view=0
-    " let g:nerdtree_tabs_synchronize_focus=0
-    " 是否自动开启nerdtree
-    " thank to @ListenerRi, see https://github.com/wklken/k-vim/issues/165
-    " let g:nerdtree_tabs_open_on_console_startup=0
-    " let g:nerdtree_tabs_open_on_gui_startup=0
-" }}}
-
-
-" Vim Workspace Controller
-" ctrlspace {{{
-    let g:airline_exclude_preview = 1
-    hi CtrlSpaceSelected guifg=#586e75 guibg=#eee8d5 guisp=#839496 gui=reverse,bold ctermfg=10 ctermbg=7 cterm=reverse,bold
-    hi CtrlSpaceNormal   guifg=#839496 guibg=#021B25 guisp=#839496 gui=NONE ctermfg=12 ctermbg=0 cterm=NONE
-    hi CtrlSpaceSearch   guifg=#cb4b16 guibg=NONE gui=bold ctermfg=9 ctermbg=NONE term=bold cterm=bold
-    hi CtrlSpaceStatus   guifg=#839496 guibg=#002b36 gui=reverse term=reverse cterm=reverse ctermfg=12 ctermbg=8
-" }}}
 
 
 " 标签导航
@@ -687,6 +667,7 @@ call plug#end()
     let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
     let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go', 'java'] }
 " }}}
+
 
 " markdown {{{
     let g:vim_markdown_folding_disabled=1

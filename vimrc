@@ -74,6 +74,7 @@ set nobackup
 " 关闭交换文件
 set noswapfile
 
+set clipboard=unnamed
 
 " TODO: remove this, use gundo
 " create undo file
@@ -89,9 +90,9 @@ set noswapfile
 " endif
 
 " 突出显示当前列
-set cursorcolumn
+" set cursorcolumn
 " 突出显示当前行
-set cursorline
+" set cursorline
 
 
 " 设置 退出vim后，内容显示在终端屏幕, 可以用于查看和复制, 不需要可以去掉
@@ -225,11 +226,6 @@ set nrformats=
 
 " 相对行号: 行号变成相对，可以用 nj/nk 进行跳转
 set relativenumber number
-au FocusLost * :set norelativenumber number
-au FocusGained * :set relativenumber
-" 插入模式下用绝对行号, 普通模式下用相对
-autocmd InsertEnter * :set norelativenumber number
-autocmd InsertLeave * :set relativenumber
 function! NumberToggle()
   if(&relativenumber == 1)
     set norelativenumber number
@@ -311,6 +307,7 @@ autocmd BufReadPost quickfix nnoremap <buffer> s <C-w><Enter><C-w>K
 
 " command-line window
 autocmd CmdwinEnter * nnoremap <buffer> <CR> <CR>
+
 
 
 " 上下左右键的行为 会显示其他信息
@@ -421,6 +418,8 @@ noremap L $
 " Map ; to : and save a million keystrokes 用于快速进入命令行
 " nnoremap ; :
 
+" Switch CWD to the directory of the open buffer
+map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " 命令行模式增强，ctrl - a到行首， -e 到行尾
 cnoremap <C-j> <t_kd>
@@ -442,10 +441,6 @@ nnoremap <silent> g* g*zz
 
 " 去掉搜索高亮
 noremap <silent><leader>/ :nohls<CR>
-
-" switch # *
-nnoremap # *
-nnoremap * #
 
 " for # indent, python文件中输入新行时#号注释不切回行首
 autocmd BufNewFile,BufRead *.py inoremap # X<c-h>#
@@ -530,9 +525,6 @@ nnoremap <leader>v V`}
 " w!! to sudo & write a file
 cmap w!! w !sudo tee >/dev/null %
 
-" kj 替换 Esc
-inoremap kj <Esc>
-
 " 滚动Speed up scrolling of the viewport slightly
 nnoremap <C-e> 2<C-e>
 nnoremap <C-y> 2<C-y>
@@ -557,7 +549,7 @@ nnoremap ` '
 nnoremap U <C-r>
 
 " Quickly edit/reload the vimrc file
-nmap <silent> <leader>ev :e $MYVIMRC<CR>
+nmap <silent> <leader>ev :e ~/.k-vim/vimrc<CR>
 nmap <silent> <leader>sv :so $MYVIMRC<CR>
 
 "==========================================
@@ -594,7 +586,7 @@ function! AutoSetFileHead()
 
     "如果文件类型为python
     if &filetype == 'python'
-        call setline(1, "\#!/usr/bin/env python")
+        call setline(1, "\# !/usr/bin/env python")
         call append(1, "\# encoding: utf-8")
     endif
 
@@ -647,7 +639,8 @@ endif
 
 " Set extra options when running in GUI mode
 if has("gui_running")
-    set guifont=Sauce_Code_Powerline:h14
+    " set guifont=Sauce_Code_Powerline:h14
+    set guifont=InconsolataFor\ Nerd\ Font\ Mono:h14
     if has("gui_gtk2")   "GTK2
         set guifont=Monaco\ 12,Monospace\ 12
     endif
@@ -696,6 +689,95 @@ highlight SpellRare term=underline cterm=underline
 highlight clear SpellLocal
 highlight SpellLocal term=underline cterm=underline
 
+nnoremap <leader>m  :<c-u><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr><c-f><left>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Helper functions
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! CmdLine(str)
+    exe "menu Foo.Bar :" . a:str
+    emenu Foo.Bar
+    unmenu Foo
+endfunction
+
+
+function! VisualSelection(direction, extra_filter) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+
+    if a:direction == 'gv'
+        call CmdLine("Ack \"" . l:pattern . "\" " )
+    elseif a:direction == 'replace'
+        call CmdLine("%s" . '/'. l:pattern . '/')
+    endif
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
+
+
+" Ack {
+  if isdirectory(expand("~/.vim/bundle/ack.vim"))
+    if executable('ag')
+      let g:ackprg = 'ag --nogroup --nocolor --column --smart-case'
+      " When you press gv you Ag after the selected text
+      vnoremap <silent> gv :call VisualSelection('gv', '')<CR>
+    endif
+  endif
+"
+" }
+"
+
+" vim-multiple-cursors {
+  if isdirectory(expand("~/.vim/bundle/vim-multiple-cursors"))
+    let g:multi_cursor_next_key="\<C-s>"
+  endif
+" }
+
+" ################### 快速导航 ###################
+
+" nerdtree nerdtreetabs {{{
+    " map <leader>n :NERDTreeToggle<CR>
+    " nerdtreetabs
+    " 关闭同步
+" }}}
+
+
+" Vim Workspace Controller
+" ctrlspace {{{
+    " let g:airline_exclude_preview = 1
+    " hi CtrlSpaceSelected guifg=#586e75 guibg=#eee8d5 guisp=#839496 gui=reverse,bold ctermfg=10 ctermbg=7 cterm=reverse,bold
+    " hi CtrlSpaceNormal   guifg=#839496 guibg=#021B25 guisp=#839496 gui=NONE ctermfg=12 ctermbg=0 cterm=NONE
+    " hi CtrlSpaceSearch   guifg=#cb4b16 guibg=NONE gui=bold ctermfg=9 ctermbg=NONE term=bold cterm=bold
+    " hi CtrlSpaceStatus   guifg=#839496 guibg=#002b36 gui=reverse term=reverse cterm=reverse ctermfg=12 ctermbg=8
+" }}}
+
+
+
+" NerdTree {
+  if isdirectory(expand("~/.vim/bundle/NerdTree"))
+    let NERDTreeHighlightCursorline=1
+    let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.obj$', '\.o$', '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
+    "close vim if the only window left open is a NERDTree
+    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | end
+    " s/v 分屏打开文件
+    let g:NERDTreeMapOpenSplit = 's'
+    let g:NERDTreeMapOpenVSplit = 'v'
+    nnoremap <leader>nn :NERDTreeToggle<cr>
+    nnoremap <leader>nb :NERDTreeFromBookmark 
+    nnoremap <leader>nf :NERDTreeFind<cr>
+    let g:nerdtree_tabs_synchronize_view=0
+    let g:nerdtree_tabs_synchronize_focus=0
+    " 是否自动开启nerdtree
+    " thank to @ListenerRi, see https://github.com/wklken/k-vim/issues/165
+    let g:nerdtree_tabs_open_on_console_startup=0
+    let g:nerdtree_tabs_open_on_gui_startup=0
+  endif
+" }
+
 " vim-airline {
     " Set configuration options for the statusline plugin vim-airline.
     " Use the powerline theme and optionally enable powerline symbols.
@@ -719,4 +801,24 @@ highlight SpellLocal term=underline cterm=underline
             " let g:airline_right_sep='‹' " Slightly fancier than '<'
         " endif
     endif
+" }
+
+" clang-format {
+  if isdirectory(expand("~/.vim/bundle/vim-clang-format/"))
+    let g:clang_format#code_style = 'Chromium'
+  endif
+" }
+
+let g:webdevicons_enable = 0
+
+let g:CtrlSpaceSymbols = {"File": "", "IA": "","Vis": "", "IV": ""}
+
+nnoremap <leader>o :CtrlSpace O<CR>
+" CtrlSpace
+  if isdirectory(expand("~/.vim/bundle/vim-ctrlspace/"))
+    if has("gui_running")
+        " Settings for MacVim and Inconsolata font
+        " let g:CtrlSpaceSymbols = { "File": "", "CTab": "", "Tabs": "" }
+    endif
+  endif
 " }
