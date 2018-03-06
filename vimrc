@@ -31,11 +31,11 @@ let g:mapleader = "\<Space>"
 syntax on
 
 " install bundles
-if filereadable(expand("~/.vimrc.bundles"))
-  source ~/.vimrc.bundles
-elseif filereadable(expand("~/.config/nvim/vimrc.bundles")) " neovim
-  source ~/.config/nvim/vimrc.bundles
-endif
+ if filereadable(expand("~/.vimrc.bundles"))
+    source ~/.vimrc.bundles
+ elseif filereadable(expand("~/.config/nvim/vimrc.bundles")) " neovim
+    source ~/.config/nvim/vimrc.bundles
+ endif
 
 " ensure ftdetect et al work by including this after the bundle stuff
 filetype plugin indent on
@@ -276,12 +276,11 @@ set formatoptions+=B
 " others 其它设置
 "==========================================
 " vimrc文件修改之后自动加载, windows
-autocmd! bufwritepost _vimrc source %
+" autocmd! bufwritepost _vimrc source %
 " vimrc文件修改之后自动加载, linux
-autocmd! bufwritepost .vimrc source %
+" autocmd! bufwritepost .vimrc source %
 
-autocmd! bufwritepost vimrc source %
-
+" autocmd! bufwritepost vimrc source %
 " 自动补全配置
 " 让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
 set completeopt=longest,menu
@@ -332,6 +331,7 @@ map <Left> <Nop>
 map <Right> <Nop>
 map <Up> <Nop>
 map <Down> <Nop>
+
 
 "Treat long lines as break lines (useful when moving around in them)
 "se swap之后，同物理行上线直接跳
@@ -451,39 +451,12 @@ autocmd BufNewFile,BufRead *.py inoremap # X<c-h>#
 " 切换前后buffer
 nnoremap [b :bprevious<cr>
 nnoremap ]b :bnext<cr>
+nnoremap <leader>1 :1b<CR>
+nnoremap <leader>2 :2b<CR>
 " 使用方向键切换buffer
 noremap <left> :bp<CR>
 noremap <right> :bn<CR>
 
-
-" tab 操作
-" http://vim.wikia.com/wiki/Alternative_tab_navigation
-" http://stackoverflow.com/questions/2005214/switching-to-a-particular-tab-in-vim
-
-" tab切换
-map <leader>th :tabfirst<cr>
-map <leader>tl :tablast<cr>
-
-map <leader>tj :tabnext<cr>
-map <leader>tk :tabprev<cr>
-map <leader>tn :tabnext<cr>
-map <leader>tp :tabprev<cr>
-
-map <leader>te :tabedit<cr>
-map <leader>td :tabclose<cr>
-map <leader>tm :tabm<cr>
-
-" normal模式下切换到确切的tab
-noremap <leader>1 1gt
-noremap <leader>2 2gt
-noremap <leader>3 3gt
-noremap <leader>4 4gt
-noremap <leader>5 5gt
-noremap <leader>6 6gt
-noremap <leader>7 7gt
-noremap <leader>8 8gt
-noremap <leader>9 9gt
-noremap <leader>0 :tablast<cr>
 
 " Toggles between the active and last active tab "
 " The first tab is always 1 "
@@ -515,9 +488,6 @@ vnoremap <leader>y "+y
 " vnoremap <silent> y y`]
 " vnoremap <silent> p p`]
 " nnoremap <silent> p p`]
-
-" select all
-map <Leader>sa ggVG
 
 " select block
 nnoremap <leader>v V`}
@@ -577,7 +547,7 @@ autocmd FileType c,cpp,java,go,php,javascript,puppet,python,rust,twig,xml,yml,pe
 
 
 " 定义函数AutoSetFileHead，自动插入文件头
-autocmd BufNewFile *.sh,*.py exec ":call AutoSetFileHead()"
+autocmd BufNewFile *.sh,*.py,*.cc exec ":call AutoSetFileHead()"
 function! AutoSetFileHead()
     "如果文件类型为.sh文件
     if &filetype == 'sh'
@@ -640,7 +610,9 @@ endif
 " Set extra options when running in GUI mode
 if has("gui_running")
     " set guifont=Sauce_Code_Powerline:h14
-    set guifont=InconsolataFor\ Nerd\ Font\ Mono:h14
+    " set guifont=InconsolataFor\ Nerd\ Font\ Mono:h13
+    set guifont=mononoki\ Nerd\ Font\ Mono:h12
+    " set guifont=SourceCodePro\ Nerd\ Font\ Mono:h12
     if has("gui_gtk2")   "GTK2
         set guifont=Monaco\ 12,Monospace\ 12
     endif
@@ -659,6 +631,8 @@ endif
 if has('gui_running')
   if has('win32')
     au GUIEnter * simalt ~x
+    " set renderoptions=type:directx
+    set renderoptions=type:directx,gamma:1.0,contrast:0.5,level:100.0,geom:1,renmode:5,taamode:1
   endif
 endif
 
@@ -689,7 +663,6 @@ highlight SpellRare term=underline cterm=underline
 highlight clear SpellLocal
 highlight SpellLocal term=underline cterm=underline
 
-nnoremap <leader>m  :<c-u><c-r>='let @'. v:register .' = '. string(getreg(v:register))<cr><c-f><left>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
@@ -809,16 +782,467 @@ endfunction
   endif
 " }
 
+" YouCompleteMe {{{
+  if isdirectory(expand("~/.vim/bundle/YouCompleteMe/"))
+      "youcompleteme  默认tab  s-tab 和自动补全冲突
+      "let g:ycm_key_list_select_completion=['<c-n>']
+      let g:ycm_key_list_select_completion = ['<Down>']
+      "let g:ycm_key_list_previous_completion=['<c-p>']
+      let g:ycm_key_list_previous_completion = ['<Up>']
+      let g:ycm_complete_in_comments = 0  "在注释输入中也能补全
+      let g:ycm_complete_in_strings = 0   "在字符串输入中也能补全
+      let g:ycm_use_ultisnips_completer = 1 "提示UltiSnips
+      let g:ycm_collect_identifiers_from_comments_and_strings = 1   "注释和字符串中的文字也会被收入补全
+      let g:ycm_collect_identifiers_from_tags_files = 1
+      " 开启语法关键字补全
+      let g:ycm_seed_identifiers_with_syntax=1
+      " 回车作为选中
+      let g:ycm_key_list_stop_completion = ['<CR>']
+
+      "let g:ycm_seed_identifiers_with_syntax=1   "语言关键字补全, 不过python关键字都很短，所以，需要的自己打开
+
+      " 跳转到定义处, 分屏打开
+      let g:ycm_goto_buffer_command = 'horizontal-split'
+      let g:ycm_register_as_syntastic_checker = 0
+      " nnoremap <leader>jd :YcmCompleter GoToDefinition<CR>
+      nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+      nnoremap <leader>gd :YcmCompleter GoToDeclaration<CR>
+
+      " 引入，可以补全系统，以及python的第三方包 针对新老版本YCM做了兼容
+      " old version
+      if !empty(glob("~/.vim/bundle/YouCompleteMe/cpp/ycm/.ycm_extra_conf.py"))
+          let g:ycm_global_ycm_extra_conf = "~/.vim/bundle/YouCompleteMe/cpp/ycm/.ycm_extra_conf.py"
+      endif
+      " new version
+      if !empty(glob("~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py"))
+          let g:ycm_global_ycm_extra_conf = "~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py"
+      endif
+
+      " 直接触发自动补全 insert模式下
+      " let g:ycm_key_invoke_completion = '<C-Space>'
+      " 黑名单,不启用
+      let g:ycm_filetype_blacklist = {
+          \ 'tagbar' : 1,
+          \ 'gitcommit' : 1,
+          \}
+  endif
+" }}}
+
 let g:webdevicons_enable = 0
 
-let g:CtrlSpaceSymbols = {"File": "", "IA": "","Vis": "", "IV": ""}
 
-nnoremap <leader>o :CtrlSpace O<CR>
-" CtrlSpace
-  if isdirectory(expand("~/.vim/bundle/vim-ctrlspace/"))
-    if has("gui_running")
-        " Settings for MacVim and Inconsolata font
-        " let g:CtrlSpaceSymbols = { "File": "", "CTab": "", "Tabs": "" }
+" delimitMate {{{
+    " for python docstring ",优化输入
+    if isdirectory(expand("~/.vim/bundle/delimitMate/"))
+      au FileType python let b:delimitMate_nesting_quotes = ['"']
+      au FileType php let delimitMate_matchpairs = "(:),[:],{:}"
+      " 关闭某些类型文件的自动补全
+      "au FileType mail let b:delimitMate_autoclose = 0
     endif
+" }}}
+
+
+" closetag {{{
+   if isdirectory(expand("~/.vim/bundle/closetag.vim"))
+    let g:closetag_html_style=1
   endif
-" }
+" }}}
+
+" ################### 快速编码 ###################
+
+" easyalign {{{
+  if isdirectory(expand("~/.vim/bundle/vim-easy-align"))
+    vmap <Leader>a <Plug>(EasyAlign)
+    nmap <Leader>a <Plug>(EasyAlign)
+    if !exists('g:easy_align_delimiters')
+    let g:easy_align_delimiters = {}
+    endif
+    let g:easy_align_delimiters['#'] = { 'pattern': '#', 'ignore_groups': ['String'] }
+    " Default:
+    " If a delimiter is in a highlight group whose name matches any of the followings, it will be ignored.
+    let g:easy_align_ignore_groups = ['Comment', 'String']
+  endif
+" }}}
+
+" ################### 快速移动 ###################
+
+" easymotion {{{
+  if isdirectory(expand("~/.vim/bundle/vim-easymotion"))
+    let g:EasyMotion_smartcase = 1
+    "let g:EasyMotion_startofline = 0 " keep cursor colum when JK motion
+    map <Leader><leader>h <Plug>(easymotion-linebackward)
+    map <Leader><Leader>j <Plug>(easymotion-j)
+    map <Leader><Leader>k <Plug>(easymotion-k)
+    map <Leader><leader>l <Plug>(easymotion-lineforward)
+    " 重复上一次操作, 类似repeat插件, 很强大
+    map <Leader><leader>. <Plug>(easymotion-repeat)
+  endif
+" }}}
+
+
+" quickscope {{{
+  if isdirectory(expand("~/.vim/bundle/quick-scope"))
+    let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+    " macvim/gvim会有问题, 暂时注解
+    " let g:qs_first_occurrence_highlight_color = '#afff5f' " gui vim
+    " let g:qs_first_occurrence_highlight_color = 155       " terminal vim
+    " let g:qs_second_occurrence_highlight_color = '#5fffff'  " gui vim
+    " let g:qs_second_occurrence_highlight_color = 81         " terminal vim
+  endif
+" }}}
+
+" ################### 快速选中 ###################
+
+" expandregion {{{
+  if isdirectory(expand("~/.vim/bundle/vim-expand-region"))
+    " map + <Plug>(expand_region_expand)
+    " map _ <Plug>(expand_region_shrink)
+    vmap v <Plug>(expand_region_expand)
+    vmap V <Plug>(expand_region_shrink)
+    " Extend the global default
+    call expand_region#custom_text_objects({
+      \ 'a]' :1,
+      \ 'ab' :1,
+      \ 'aB' :1,
+      \ 'ii' :0,
+      \ 'ai' :0,
+      \ })
+  endif
+" }}}
+
+" multiplecursors {{{
+  if isdirectory(expand("~/.vim/bundle/vim-multiple-cursors"))
+    let g:multi_cursor_use_default_mapping=0
+    " Default mapping
+    let g:multi_cursor_next_key='<C-m>'
+    let g:multi_cursor_prev_key='<C-p>'
+    let g:multi_cursor_skip_key='<C-x>'
+    let g:multi_cursor_quit_key='<Esc>'
+  endif
+" }}}
+
+" ################### 功能相关 ###################
+
+" ctrlp ctrlpfunky{{{
+  if isdirectory(expand("~/.vim/bundle/ctrlp.vim"))
+    let g:ctrlp_map = '<leader>p'
+    let g:ctrlp_cmd = 'CtrlP'
+    " map <leader>f :CtrlPMRU<CR>
+    let g:ctrlp_custom_ignore = {
+        \ 'dir':  '\v[\/]\.(git|hg|svn|rvm)$',
+        \ 'file': '\v\.(exe|so|dll|zip|tar|tar.gz|pyc)$',
+        \ }
+    let g:ctrlp_working_path_mode=0
+    let g:ctrlp_match_window_bottom=1
+    let g:ctrlp_max_height=15
+    let g:ctrlp_match_window_reversed=0
+    let g:ctrlp_mruf_max=500
+    let g:ctrlp_follow_symlinks=1
+    " 如果安装了ag, 使用ag
+    " if executable('ag')
+    " " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+    " let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+    " " ag is fast enough that CtrlP doesn't need to cache
+    " let g:ctrlp_use_caching = 0
+    " endif
+
+    " ctrlpfunky
+    " ctrlp插件1 - 不用ctag进行函数快速跳转
+    nnoremap <Leader>fu :CtrlPFunky<Cr>
+    " narrow the list down with a word under cursor
+    nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
+    let g:ctrlp_funky_syntax_highlight = 1
+
+    let g:ctrlp_extensions = ['funky']
+  endif
+" }}}
+
+
+" ctrlsf {{{
+    nmap \ <Plug>CtrlSFCwordPath<CR>
+    " let g:ctrlsf_position = 'below'
+    " let g:ctrlsf_winsize = '30%'
+    let g:ctrlsf_auto_close = 0
+    let g:ctrlsf_confirm_save = 0
+    " Note: cannot use <CR> or <C-m> for open
+    " Use : <sapce> or <tab>
+    let g:ctrlsf_mapping = {
+        \ "open"  : "<Space>",
+        \ "openb" : "O",
+        \ "tab"   : "t",
+        \ "tabb"  : "T",
+        \ "prevw" : "p",
+        \ "quit"  : "q",
+        \ "next"  : "<C-J>",
+        \ "prev"  : "<C-K>",
+        \ "pquit" : "q",
+        \ }
+" }}}
+
+if isdirectory(expand("~/.vim/bundle/lightline.vim"))
+  let g:lightline = {
+        \ 'colorscheme': 'one',
+        \ }
+endif
+
+
+" ultisnips {{{
+if isdirectory(expand('~/.vim/bundle/ultisnips'))
+    let g:UltiSnipsExpandTrigger       = "<tab>"
+    let g:UltiSnipsJumpForwardTrigger  = "<tab>"
+    let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+    let g:UltiSnipsSnippetDirectories  = ['UltiSnips']
+    let g:UltiSnipsSnippetsDir = '~/.vim/UltiSnips'
+    " 定义存放代码片段的文件夹 .vim/UltiSnips下，使用自定义和默认的，将会的到全局，有冲突的会提示
+    " 进入对应filetype的snippets进行编辑
+    map <leader>us :UltiSnipsEdit<CR>
+
+    " ctrl+j/k 进行选择
+    func! g:JInYCM()
+        if pumvisible()
+            return "\<C-n>"
+        else
+            return "\<c-j>"
+        endif
+    endfunction
+
+    func! g:KInYCM()
+        if pumvisible()
+            return "\<C-p>"
+        else
+            return "\<c-k>"
+        endif
+    endfunction
+    inoremap <c-j> <c-r>=g:JInYCM()<cr>
+    au BufEnter,BufRead * exec "inoremap <silent> " . g:UltiSnipsJumpBackwordTrigger . " <C-R>=g:KInYCM()<cr>"
+    let g:UltiSnipsJumpBackwordTrigger = "<c-k>"
+endif
+" }}}
+"
+" closetag {{{
+if isdirectory(expand('~/.vim/bundle/closetag.vim'))
+    let g:closetag_html_style=1
+endif
+" }}}
+"
+" nerdcommenter {{{
+if isdirectory(expand('~/.vim/bundle/nerdcommenter'))
+    let g:NERDSpaceDelims=1
+    let g:NERDAltDelims_python = 1
+endif
+" }}}
+"
+
+" trailingwhitespace {{{
+if isdirectory(expand('~/.vim/bundle/vim-trailing-whitespace'))
+    map <leader>s :FixWhitespace<cr>
+endif
+" }}}
+
+
+" easyalign {{{
+if isdirectory(expand('~/.vim/bundle/vim-easy-align'))
+    vmap <Leader>a <Plug>(EasyAlign)
+    nmap <Leader>a <Plug>(EasyAlign)
+    if !exists('g:easy_align_delimiters')
+    let g:easy_align_delimiters = {}
+    endif
+    let g:easy_align_delimiters['#'] = { 'pattern': '#', 'ignore_groups': ['String'] }
+    " Default:
+    " If a delimiter is in a highlight group whose name matches any of the followings, it will be ignored.
+    let g:easy_align_ignore_groups = ['Comment', 'String']
+endif
+" }}}
+
+" rainbow_parentheses {{{
+if isdirectory(expand('~/.vim/bundle/rainbow_parentheses.vim'))
+    " 不加入这行, 防止黑色括号出现, 很难识别
+    " \ ['black',       'SeaGreen3'],
+    let g:rbpt_colorpairs = [
+        \ ['brown',       'RoyalBlue3'],
+        \ ['Darkblue',    'SeaGreen3'],
+        \ ['darkgray',    'DarkOrchid3'],
+        \ ['darkgreen',   'firebrick3'],
+        \ ['darkcyan',    'RoyalBlue3'],
+        \ ['darkred',     'SeaGreen3'],
+        \ ['darkmagenta', 'DarkOrchid3'],
+        \ ['brown',       'firebrick3'],
+        \ ['gray',        'RoyalBlue3'],
+        \ ['darkmagenta', 'DarkOrchid3'],
+        \ ['Darkblue',    'firebrick3'],
+        \ ['darkgreen',   'RoyalBlue3'],
+        \ ['darkcyan',    'SeaGreen3'],
+        \ ['darkred',     'DarkOrchid3'],
+        \ ['red',         'firebrick3'],
+        \ ]
+
+    let g:rbpt_max = 16
+    let g:rbpt_loadcmd_toggle = 0
+    au VimEnter * RainbowParenthesesToggle
+    au Syntax * RainbowParenthesesLoadRound
+    au Syntax * RainbowParenthesesLoadSquare
+    au Syntax * RainbowParenthesesLoadBraces
+endif
+" }}}
+
+
+" ################### 显示增强-主题 ###################"
+
+" solarized {{{
+if isdirectory('~/.vim/bundle/vim-colors-solarized')
+    let g:solarized_termtrans=1
+    let g:solarized_contrast="normal"
+    let g:solarized_visibility="normal"
+    " let g:solarized_termcolors=256
+endif
+" }}}
+
+" molokai {{{
+if isdirectory('~/.vim/bundle/molokai')
+    " monokai原始背景色
+    let g:molokai_original = 1
+    let g:rehash256 = 1
+endif
+" }}}
+
+
+
+" 标签导航
+" tagbar {{{
+if isdirectory(expand("~/.vim/bundle/tagbar/"))
+    nmap <F9> :TagbarToggle<CR>
+    let g:tagbar_autofocus = 1
+    " let g:tagbar_autoshowtag = 1
+    " let g:tagbar_show_visibility = 1
+    " for ruby
+    let g:tagbar_type_ruby = {
+        \ 'kinds' : [
+            \ 'm:modules',
+            \ 'c:classes',
+            \ 'd:describes',
+            \ 'C:contexts',
+            \ 'f:methods',
+            \ 'F:singleton methods'
+        \ ]
+    \ }
+
+    " go语言的tagbar配置
+    " 1. install gotags 'go get -u github.com/jstemmer/gotags'
+    " 2. make sure `gotags` in you shell PATH, you can call check it with `which gotags`
+    " for gotags. work with tagbar
+    let g:tagbar_type_go = {
+        \ 'ctagstype' : 'go',
+        \ 'kinds'     : [
+            \ 'p:package',
+            \ 'i:imports:1',
+            \ 'c:constants',
+            \ 'v:variables',
+            \ 't:types',
+            \ 'n:interfaces',
+            \ 'w:fields',
+            \ 'e:embedded',
+            \ 'm:methods',
+            \ 'r:constructor',
+            \ 'f:functions'
+        \ ],
+        \ 'sro' : '.',
+        \ 'kind2scope' : {
+            \ 't' : 'ctype',
+            \ 'n' : 'ntype'
+        \ },
+        \ 'scope2kind' : {
+            \ 'ctype' : 't',
+            \ 'ntype' : 'n'
+        \ },
+        \ 'ctagsbin'  : 'gotags',
+        \ 'ctagsargs' : '-sort -silent'
+    \ }
+endif
+" }}}
+
+
+" ################### 语言相关 ###################
+
+" quickrun {{{
+if isdirectory(expand('~/.vim/bundle/quickrun'))
+    let g:quickrun_config = {
+    \   "_" : {
+    \       "outputter" : "message",
+    \   },
+    \}
+
+    let g:quickrun_no_default_key_mappings = 1
+    nmap <Leader>r <Plug>(quickrun)
+    map <F10> :QuickRun<CR>
+endif
+" }}}
+
+
+" pythonsyntax {{{
+    let python_highlight_all = 1
+" }}}
+
+" piv {{{
+    let g:DisableAutoPHPFolding = 1
+" }}}
+
+
+" vimgo {{{
+    let g:go_highlight_functions = 1
+    let g:go_highlight_methods = 1
+    let g:go_highlight_structs = 1
+    let g:go_highlight_operators = 1
+    let g:go_highlight_build_constraints = 1
+
+    let g:go_fmt_fail_silently = 1
+    " format with goimports instead of gofmt
+    let g:go_fmt_command = "goimports"
+    let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
+    let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go', 'java'] }
+" }}}
+
+
+" markdown {{{
+    let g:vim_markdown_folding_disabled=1
+" }}}
+
+
+" javascript {{{
+    " pangloss/vim-javascript
+    let g:html_indent_inctags = "html,body,head,tbody"
+    let g:html_indent_script1 = "inc"
+    let g:html_indent_style1 = "inc"
+" }}}
+
+" json {{{
+    let g:vim_json_syntax_conceal = 0
+" }}}
+
+" css {{{
+" }}}
+
+" nginx {{{
+" }}}
+
+
+" ####### temp #######
+
+" beta {{{
+    " pip install yapf
+    " python code format
+    " format all file
+    autocmd FileType python nnoremap <leader>y :0,$!yapf<Cr>
+    " format select block
+    autocmd FileType python vnoremap <leader>y :!yapf<Cr>
+
+    " Plug 'posva/vim-vue'
+
+    " Plug 'millermedeiros/vim-esformatter'
+    " will run esformatter after pressing <leader> followed by the 'e' and 's'
+    " keys
+    " nnoremap <silent> <leader>es :Esformatter<CR>
+    " vnoremap <silent> <leader>es :EsformatterVisual<CR>
+
+" }}}
+
+"------------------------------------------- end of configs --------------------------------------------
