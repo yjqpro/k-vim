@@ -1,0 +1,27 @@
+snippet gypi
+{
+	'includes':[
+		'../build/win_precompile.gypi',
+	],
+	'targets' : [
+	{
+		'target_name' : '$1',
+		'type' : '$1',
+		'variables' : {
+		},
+		'sources' : [
+		],
+		'dependencies' : [
+		],
+		'defines' : [
+		],
+		'includes' : [
+		],
+		'include_dirs' : [
+			'..',
+		],
+	},
+	]
+}
+endsnippet
+
