@@ -673,16 +673,15 @@ function! CmdLine(str)
     unmenu Foo
 endfunction
 
-
 function! VisualSelection(direction, extra_filter) range
     let l:saved_reg = @"
     execute "normal! vgvy"
 
-    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = escape(@", "\\/.*'$^~[]")
     let l:pattern = substitute(l:pattern, "\n$", "", "")
 
     if a:direction == 'gv'
-        call CmdLine("Ack \"" . l:pattern . "\" " )
+        call CmdLine("Ack '" . l:pattern . "' " )
     elseif a:direction == 'replace'
         call CmdLine("%s" . '/'. l:pattern . '/')
     endif
@@ -691,13 +690,13 @@ function! VisualSelection(direction, extra_filter) range
     let @" = l:saved_reg
 endfunction
 
-
 " Ack {
   if isdirectory(expand("~/.vim/bundle/ack.vim"))
     if executable('ag')
       let g:ackprg = 'ag --nogroup --nocolor --column --smart-case'
       " When you press gv you Ag after the selected text
       vnoremap <silent> gv :call VisualSelection('gv', '')<CR>
+      nnoremap <leader>g :Ack
     endif
   endif
 "
@@ -733,8 +732,7 @@ endfunction
 " NerdTree {
   if isdirectory(expand("~/.vim/bundle/NerdTree"))
     let NERDTreeHighlightCursorline=1
-    let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.obj$', '\.o$', '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
-    "close vim if the only window left open is a NERDTree
+    let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.obj$', '\.o$', '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ] "close vim if the only window left open is a NERDTree
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | end
     " s/v 分屏打开文件
     let g:NERDTreeMapOpenSplit = 's'
@@ -945,6 +943,7 @@ let g:webdevicons_enable = 0
     " " ag is fast enough that CtrlP doesn't need to cache
     " let g:ctrlp_use_caching = 0
     " endif
+    nnoremap <leader>b :CtrlPBuffer<CR>
 
     " ctrlpfunky
     " ctrlp插件1 - 不用ctag进行函数快速跳转
