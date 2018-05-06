@@ -6,10 +6,11 @@ snippet gypi
 	'targets' : [
 	{
 		'target_name' : '$1',
-		'type' : '$1',
+		'type' : '${2:executable}',
 		'variables' : {
 		},
 		'sources' : [
+			'<!@(python ../build/glob_files.py . *.h *.cc)',
 		],
 		'dependencies' : [
 		],
@@ -24,4 +25,35 @@ snippet gypi
 	]
 }
 endsnippet
+
+snippet ut
+{
+	'target_name' : '$1_unittest',
+	'type' : 'executable',
+	'variables' : {
+	},
+	'sources/' : [
+		['exclude', '.*'],
+		['include', '_unittest\\.cc$']
+	],
+	'dependencies' : [
+		'<(DEPTH)/testing/gmock.gyp:gmock',
+		'<(DEPTH)/testing/gmock.gyp:gmock_main',
+		'$1',
+	],
+	'defines' : [
+	],
+	'includes' : [
+	],
+	'include_dirs' : [
+		'..',
+	],
+},
+endsnippet
+
+snippet var
+'variables': {
+}
+endsnippet
+
 

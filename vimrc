@@ -198,7 +198,7 @@ endfun
 
 " 缩进配置
 " Smart indent
-set smartindent
+" set smartindent
 " 打开自动缩进
 " never add copyindent, case error   " copy the previous indentation on autoindenting
 set autoindent
@@ -283,7 +283,8 @@ set formatoptions+=B
 " autocmd! bufwritepost vimrc source %
 " 自动补全配置
 " 让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
-set completeopt=longest,menu
+" set completeopt=longest,menu
+set completeopt=menu,menuone
 
 " 增强模式中的命令行自动完成操作
 set wildmenu
@@ -612,6 +613,7 @@ if has("gui_running")
     " set guifont=Sauce_Code_Powerline:h14
     " set guifont=InconsolataFor\ Nerd\ Font\ Mono:h13
     set guifont=mononoki\ Nerd\ Font\ Mono:h12
+    " set guifont=Fira\ Code:h12
     " set guifont=SourceCodePro\ Nerd\ Font\ Mono:h12
     if has("gui_gtk2")   "GTK2
         set guifont=Monaco\ 12,Monospace\ 12
@@ -738,7 +740,7 @@ endfunction
     let g:NERDTreeMapOpenSplit = 's'
     let g:NERDTreeMapOpenVSplit = 'v'
     nnoremap <leader>nn :NERDTreeToggle<cr>
-    nnoremap <leader>nb :NERDTreeFromBookmark 
+    nnoremap <leader>nb :NERDTreeFromBookmark
     nnoremap <leader>nf :NERDTreeFind<cr>
     let g:nerdtree_tabs_synchronize_view=0
     let g:nerdtree_tabs_synchronize_focus=0
@@ -784,24 +786,31 @@ endfunction
   if isdirectory(expand("~/.vim/bundle/YouCompleteMe/"))
       "youcompleteme  默认tab  s-tab 和自动补全冲突
       "let g:ycm_key_list_select_completion=['<c-n>']
+      let g:ycm_add_preview_to_completeopt = 0
+      let g:ycm_show_diagnostics_ui = 0
+      let g:ycm_server_log_level = 'info'
+      let g:ycm_min_num_identifier_candidate_chars = 2
+
       let g:ycm_key_list_select_completion = ['<Down>']
       "let g:ycm_key_list_previous_completion=['<c-p>']
       let g:ycm_key_list_previous_completion = ['<Up>']
       let g:ycm_complete_in_comments = 0  "在注释输入中也能补全
       let g:ycm_complete_in_strings = 0   "在字符串输入中也能补全
       let g:ycm_use_ultisnips_completer = 1 "提示UltiSnips
-      let g:ycm_collect_identifiers_from_comments_and_strings = 1   "注释和字符串中的文字也会被收入补全
+      let g:ycm_collect_identifiers_from_comments_and_strings = 0   "注释和字符串中的文字也会被收入补全
       let g:ycm_collect_identifiers_from_tags_files = 1
       " 开启语法关键字补全
       let g:ycm_seed_identifiers_with_syntax=1
       " 回车作为选中
       let g:ycm_key_list_stop_completion = ['<CR>']
 
-      "let g:ycm_seed_identifiers_with_syntax=1   "语言关键字补全, 不过python关键字都很短，所以，需要的自己打开
 
       " 跳转到定义处, 分屏打开
       let g:ycm_goto_buffer_command = 'horizontal-split'
       let g:ycm_register_as_syntastic_checker = 0
+
+      let g:ycm_key_invoke_completion = '<c-z>'
+
       " nnoremap <leader>jd :YcmCompleter GoToDefinition<CR>
       nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
       nnoremap <leader>gd :YcmCompleter GoToDeclaration<CR>
@@ -823,6 +832,15 @@ endfunction
           \ 'tagbar' : 1,
           \ 'gitcommit' : 1,
           \}
+
+      let g:ycm_filetype_whitelist = {
+            \ "c":1,
+            \ "cpp":1,
+            \ "objc":1,
+            \ "sh":1,
+            \ "zsh":1,
+            \ "zimbu":1,
+            \ }
   endif
 " }}}
 
@@ -1224,15 +1242,39 @@ endif
 " }}}
 
 
+" XXXXXX PPP
+" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = '.tags'
+
+" 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let s:vim_tags = expand('~/.cache/tags')
+let g:gutentags_cache_dir = s:vim_tags
+
+" 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+
+" 检测 ~/.cache/tags 不存在就新建
+if !isdirectory(s:vim_tags)
+   silent! call mkdir(s:vim_tags, 'p')
+endif
+" }}}
+
 " ####### temp #######
 
 " beta {{{
     " pip install yapf
     " python code format
     " format all file
-    autocmd FileType python nnoremap <leader>y :0,$!yapf<Cr>
+    autocmd FileType python nnoremap <localleader>y :0,$!yapf<Cr>
     " format select block
-    autocmd FileType python vnoremap <leader>y :!yapf<Cr>
+    autocmd FileType python vnoremap <localleader>y :!yapf<Cr>
+
+    autocmd FileType json nnoremap <localleader>y :%!python -m json.tool<CR>
 
     " Plug 'posva/vim-vue'
 
